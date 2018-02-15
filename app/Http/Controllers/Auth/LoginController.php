@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -35,5 +37,27 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    /**
+     * авторизация пользователя
+     */
+    public function login(Request $request)
+    {
+        $array = $request->all();
+        $remember = $request->has('remember');
+
+        if(Auth::attempt([
+            'email' => $array['email'],
+            'password' => $array['password'],
+            'is_active' => true,
+        ], $remember)) {
+            return redirect()->intended('/home');
+        }
+        return redirect()->back()
+            ->withInput($request->only('email', 'remember'))
+            ->withErrors([
+                'login' => 'Данные аутентификации не верны'
+            ]);
     }
 }

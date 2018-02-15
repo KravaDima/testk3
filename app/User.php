@@ -26,4 +26,12 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Связь моделей Users и UserRegistrationLog один к одному
+     */
+    public function relationUserRegistrationLog()
+    {
+        return $this->hasOne('App\Model\UserRegistrationLog', 'user_id', 'id');
+    }
 }
